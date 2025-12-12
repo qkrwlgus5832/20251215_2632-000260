@@ -1,3 +1,6 @@
+val loggerVersion by extra { "2.0.13" }
+val httpClientVersion by extra { "4.5.14" }
+
 plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("kapt") version "1.9.23"

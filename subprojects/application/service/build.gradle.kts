@@ -1,5 +1,7 @@
 dependencies {
     api(project(":domain"))
+    api(project(":client:notification-sender"))
+    implementation(project(":infra"))
 }
 
 tasks {

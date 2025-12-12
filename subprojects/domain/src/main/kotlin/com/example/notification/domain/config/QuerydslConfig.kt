@@ -1,4 +1,4 @@
-package com.example.notification.config
+package com.example.notification.domain.config
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager

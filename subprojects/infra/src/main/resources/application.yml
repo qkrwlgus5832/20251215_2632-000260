@@ -1,0 +1,9 @@
+app:
+  kafka:
+    bootstrap-servers: kafka:9092
+    notification:
+      topic: notifications-topic
+      consumer:
+        group-id: my-group
+        auto-offset-reset: earliest
+        concurrency-count: 3

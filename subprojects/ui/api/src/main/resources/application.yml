@@ -1,0 +1,18 @@
+logging:
+  level:
+    org.springframework.boot.context.properties: DEBUG
+
+app:
+  kafka:
+    bootstrap-servers: kafka:9092
+    notification:
+      topic: notifications-topic
+      consumer:
+        group-id: my-group
+        auto-offset-reset: earliest
+        concurrency-count: 3
+
+notification-sender:
+  server:
+    host: localhost
+    port: 8090

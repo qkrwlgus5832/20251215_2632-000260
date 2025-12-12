@@ -2,9 +2,11 @@ rootProject.name = "notifiaction-front-server"
 
 include(
     "domain",
-    "service",
+    "application:service",
+    "application:notification-kafka-consumer",
     "ui:api",
-    "infra"
+    "infra",
+    "client:notification-sender"
 )
 
 makeProjectDir(rootProject, "subprojects")
