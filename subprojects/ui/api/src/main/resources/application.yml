@@ -4,15 +4,19 @@ logging:
 
 app:
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
     notification:
       topic: notifications-topic
       consumer:
-        group-id: my-group
-        auto-offset-reset: earliest
+        group-id: notification-group
         concurrency-count: 3
 
 notification-sender:
   server:
     host: localhost
     port: 8090
+
+spring:
+  profiles:
+    include:
+      - domain

@@ -1,19 +1,15 @@
 package com.example.notification.domain.event
 
+import com.example.notification.domain.enums.Channel
 import java.time.LocalDateTime
 import java.util.UUID
 
-enum class Channel {
-    KAKAO,
-    SMS,
-    EMAIL,
-}
-
 data class NotificationEvent(
     val eventId: String = UUID.randomUUID().toString(),
-    val channel: Channel,
-    val title: String,
-    val contents: String,
-    val target: String,
-    val requestedAt: LocalDateTime = LocalDateTime.now()
+    val channel: Channel = Channel.EMAIL,
+    val title: String = "",
+    val contents: String = "",
+    val target: String = "",
+    val requesterId: String = "",
+    var reserveTime: LocalDateTime = LocalDateTime.now()
 )

@@ -1,4 +1,4 @@
-package com.example.`kafka-consume`.config
+package com.example.notification.`kafka-consume`.config
 
 import com.example.notification.infra.kafka.properties.KafkaProperties
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -11,6 +11,8 @@ import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
+import org.springframework.kafka.listener.ContainerProperties
+import org.springframework.kafka.support.serializer.JsonDeserializer
 
 @Configuration
 @EnableKafka
@@ -25,7 +27,8 @@ class KafkaConsumerConfig(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to kafkaProperties.bootstrapServers,
                 ConsumerConfig.GROUP_ID_CONFIG to kafkaProperties.notification.consumer.groupId,
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to JsonDeserializer::class.java,
+                JsonDeserializer.TRUSTED_PACKAGES to "*"
             )
         )
 
@@ -35,6 +38,8 @@ class KafkaConsumerConfig(
         return ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             consumerFactory = consumerFactory()
             setConcurrency(concurrencyCount.toInt())
+        }.apply {
+            this.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL
         }
     }
 }

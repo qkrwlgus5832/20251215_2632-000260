@@ -14,7 +14,6 @@ data class KafkaProperties(
 
     data class Consumer(
         val groupId: String,
-        val autoOffsetReset: String,
         val concurrencyCount: Int
     )
 }

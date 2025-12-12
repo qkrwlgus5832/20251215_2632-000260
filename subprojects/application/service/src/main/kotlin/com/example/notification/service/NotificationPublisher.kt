@@ -13,8 +13,8 @@ class NotificationPublisher(
     fun publish(event: NotificationEvent) {
         kafkaMessagePublisher.publish(
             kafkaProperties.notification.topic,
-            event.channel.toString(),
-            event.contents
+            "${event.channel}:${event.target}",
+            event
         )
     }
 }

@@ -1,5 +1,5 @@
 package com.example.notification.infra.kafka.client
 
 interface KafkaMessagePublisher {
-    fun publish(topic: String, key: String, message: String)
+    fun<T> publish(topic: String, key: String, message: T)
 }

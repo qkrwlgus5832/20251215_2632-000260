@@ -4,6 +4,7 @@ include(
     "domain",
     "application:service",
     "application:notification-kafka-consumer",
+    "application:scheduler",
     "ui:api",
     "infra",
     "client:notification-sender"

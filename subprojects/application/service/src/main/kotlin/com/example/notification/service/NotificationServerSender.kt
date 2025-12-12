@@ -4,18 +4,19 @@ import com.example.notification.EmailSender
 import com.example.notification.KakaoTalkSender
 import com.example.notification.ResultCode
 import com.example.notification.SmsSender
-import com.example.notification.domain.event.Channel
+import com.example.notification.domain.enums.Channel
+
 import com.example.notification.domain.event.NotificationEvent
 import org.springframework.stereotype.Service
 
 @Service
-class NotificationSender(
+class NotificationServerSender(
     private val emailSender: EmailSender,
     private val kakaoTalkSender: KakaoTalkSender,
     private val smsSender: SmsSender
 ) {
-    fun send(event: NotificationEvent) {
-        when (event.channel) {
+    fun send(event: NotificationEvent): ResultCode {
+        return when (event.channel) {
             Channel.SMS -> sendSms(event)
             Channel.KAKAO -> sendKakao(event)
             Channel.EMAIL -> sendEmail(event)

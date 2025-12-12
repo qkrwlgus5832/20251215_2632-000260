@@ -1,6 +1,6 @@
 package com.example.notification.factory
 
-import com.example.notification.domain.event.Channel
+import com.example.notification.domain.enums.Channel
 import com.example.notification.domain.event.NotificationEvent
 import com.example.notification.request.NotificationSendRequest
 
@@ -13,6 +13,12 @@ object NotificationEventFactory {
             title = request.title,
             contents = request.message,
             target = request.target,
-        )
+            requesterId = request.requesterId,
+        ).apply {
+            request.reserveTime?.let {
+                this.reserveTime = it
+            }
+        }
+
     }
 }
