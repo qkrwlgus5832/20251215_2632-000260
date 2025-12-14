@@ -1,5 +1,6 @@
 package com.example.notification.service.log
 
+import com.example.notification.ResultCode
 import com.example.notification.domain.entity.log.NotificationLog
 import com.example.notification.domain.enums.NotificationStatus
 import com.example.notification.domain.event.NotificationEvent
@@ -8,12 +9,12 @@ import com.example.notification.service.log.condition.NotificationLogSearchCondi
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
-@Transactional
 class NotificationLogService(
     private val notificationLogRepository: NotificationLogRepository
 ) {
@@ -21,16 +22,32 @@ class NotificationLogService(
         private const val LOG_SEARCH_MONTH = 3L
     }
 
-    fun updateNotification(event: NotificationEvent): NotificationLog {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun updateNotification(event: NotificationEvent): NotificationLog? {
         val existed = notificationLogRepository.findFirstByEventId(event.eventId)
 
-        if (existed.status == NotificationStatus.FAIL || existed.status == NotificationStatus.RESERVED){
+        if (existed?.status == NotificationStatus.FAIL || existed?.status == NotificationStatus.RESERVED){
             existed.markPending()
         }
 
         return existed
     }
 
+    @Transactional
+    fun updateNotification(event: NotificationEvent, resultCode: ResultCode): NotificationLog? {
+        val existed = notificationLogRepository.findFirstByEventId(event.eventId)
+
+        if (resultCode == ResultCode.SUCCESS) {
+            existed?.markSuccess()
+        }
+        else {
+            existed?.markFail()
+        }
+
+        return existed
+    }
+
+    @Transactional
     fun saveInstantNotification(event: NotificationEvent): NotificationLog {
         val log = NotificationLog(
             userId = event.target,
@@ -47,6 +64,7 @@ class NotificationLogService(
         return notificationLogRepository.save(log)
     }
 
+    @Transactional
     fun saveReserveNotification(event: NotificationEvent): NotificationLog {
         val log = NotificationLog(
             userId = event.target,
@@ -63,6 +81,7 @@ class NotificationLogService(
         return notificationLogRepository.save(log)
     }
 
+    @Transactional
     fun getRecentLogs(
         condition: NotificationLogSearchCondition,
         page: Int,

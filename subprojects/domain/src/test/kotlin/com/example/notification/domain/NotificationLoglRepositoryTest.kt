@@ -39,20 +39,116 @@ class NotificationLogRepositoryTest {
         userId: String = "userId",
         status: NotificationStatus = NotificationStatus.SUCCESS,
         channel: Channel = Channel.KAKAO,
-        createdAt: LocalDateTime
+        createdAt: LocalDateTime = LocalDateTime.now(),
+        sendAt: LocalDateTime = LocalDateTime.now(),
+        eventId: String = UUID.randomUUID().toString(),
+        retryCount: Int = 0
     ): NotificationLog {
         val log = NotificationLog(
             requesterId = requesterId,
             userId = userId,
             status = status,
             channel = channel,
-            eventId = UUID.randomUUID().toString(),
-            sendAt = LocalDateTime.now(),
+            eventId = eventId,
+            retryCount = retryCount,
+            sendAt = sendAt,
             createdAt = createdAt
         )
         return notificationLogRepository.save(log)
     }
 
+    @Test
+    fun `eventId로 로그를 조회한다`() {
+        // given
+        val eventId = UUID.randomUUID().toString()
+
+        saveLog(eventId = eventId)
+
+        // when
+        val result = notificationLogRepository.findFirstByEventId(eventId)
+
+        // then
+        assertThat(result).isNotNull
+        assertThat(result!!.eventId).isEqualTo(eventId)
+    }
+
+    @Test
+    fun `예약 시간이 지난 RESERVED 로그만 조회한다`() {
+        // given
+        val now = LocalDateTime.now()
+
+        saveLog(
+            status = NotificationStatus.RESERVED,
+            sendAt = now.minusMinutes(5)
+        )
+
+        saveLog(
+            status = NotificationStatus.RESERVED,
+            sendAt = now.plusMinutes(4)
+        )
+
+        saveLog(
+            status = NotificationStatus.RESERVED,
+            sendAt = now.plusMinutes(3)
+        )
+
+        // when
+        val results = notificationLogRepository.findReservableLogs(now)
+
+        // then
+        assertThat(results).hasSize(1)
+    }
+
+    @Test
+    fun `retryCount가 maxRetry 이하인 FAIL 로그만 조회한다`() {
+        // given
+        saveLog(
+            status = NotificationStatus.FAIL,
+            retryCount = 3,
+        )
+
+        saveLog(
+            status = NotificationStatus.FAIL,
+            retryCount = 11
+        )
+
+        saveLog(
+            status = NotificationStatus.FAIL,
+            retryCount = 1
+        )
+
+
+        // when
+        val results = notificationLogRepository.findRetryableFailedLogs(maxRetry = 5)
+
+        // then
+        assertThat(results).hasSize(2)
+    }
+
+    @Test
+    fun `retryable 로그는 createdAt 오름차순으로 정렬된다`() {
+        // given
+        val now = LocalDateTime.now()
+
+        // oldLog
+        saveLog(
+            status = NotificationStatus.FAIL,
+            retryCount = 5
+        )
+
+        // newLog
+        saveLog(
+            status = NotificationStatus.FAIL,
+            retryCount = 1
+        )
+
+        // when
+        val results = notificationLogRepository.findRetryableFailedLogs(10)
+
+        // then
+        assertThat(results).hasSize(2)
+        assertThat(results[0].createdAt.isBefore(results[1].createdAt))
+    }
     @Test
     fun `requesterId와 날짜 범위로 로그를 조회한다`() {
         // given

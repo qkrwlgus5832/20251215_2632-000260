@@ -9,9 +9,8 @@ import org.springframework.data.repository.query.Param
 import java.time.LocalDateTime
 
 interface NotificationLogRepository : JpaRepository<NotificationLog, Long>, NotificationLogQueryDslRepository {
-    fun findFirstByEventId(eventId: String): NotificationLog
+    fun findFirstByEventId(eventId: String): NotificationLog?
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(
         """
         select l from NotificationLog l
@@ -24,14 +23,14 @@ interface NotificationLogRepository : JpaRepository<NotificationLog, Long>, Noti
         @Param("now") now: LocalDateTime
     ): List<NotificationLog>
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(
         """
         select l
         from NotificationLog l
         where l.status = 'FAIL'
+            and l.retryCount <= :maxRetry
         order by l.createdAt
     """
     )
-    fun findRetryableFailedLogs(now: LocalDateTime): List<NotificationLog>
+    fun findRetryableFailedLogs(maxRetry: Int): List<NotificationLog>
 }

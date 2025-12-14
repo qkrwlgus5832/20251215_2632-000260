@@ -7,6 +7,7 @@ import com.example.notification.service.NotificationPublisher
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.time.LocalDateTime
 
 @Component
@@ -16,8 +17,7 @@ class ReservedNotificationScheduler(
 ) {
     @Transactional
     @Scheduled(cron = "0 * * * * *")
-    fun sendReservedNotifications() {
-        val now = LocalDateTime.now()
+    fun sendReservedNotifications() {val now = LocalDateTime.now()
 
         val logs = logRepository.findReservableLogs(now)
 

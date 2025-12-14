@@ -10,7 +10,7 @@ data class NotificationSendRequest (
     val message: String,
     val target: String,
     val requesterId: String,
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyyMMddhhmm")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyyMMddHHmm")
     val reserveTime: LocalDateTime?
 ) {
     enum class Channel {

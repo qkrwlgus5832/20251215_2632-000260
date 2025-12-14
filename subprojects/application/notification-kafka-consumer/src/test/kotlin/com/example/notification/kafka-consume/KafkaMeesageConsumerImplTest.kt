@@ -48,13 +48,16 @@ class KafkaMeesageConsumerImplTest(
             sender.send(event)
         } returns ResultCode.SUCCESS
 
+        every {
+            notificationLogService.updateNotification(event, ResultCode.SUCCESS)
+        } returns pendingLog
+
         // when
         consumer.consume(event, acknowledgment)
 
         // then
         verify(exactly = 1) { sender.send(event) }
-        verify(exactly = 0) { pendingLog.markFail() }
-        verify(exactly = 1) { pendingLog.markSuccess() }
+        verify(exactly = 1) { notificationLogService.updateNotification(event, ResultCode.SUCCESS) }
         verify(exactly = 1) { acknowledgment.acknowledge() }
     }
 
@@ -76,13 +79,16 @@ class KafkaMeesageConsumerImplTest(
             sender.send(event)
         } returns ResultCode.FAIL
 
+        every {
+            notificationLogService.updateNotification(event, ResultCode.FAIL)
+        } returns pendingLog
+
         // when
         consumer.consume(event, acknowledgment)
 
         // then
         verify(exactly = 1) { sender.send(event) }
-        verify(exactly = 1) { pendingLog.markFail() }
-        verify(exactly = 0) { pendingLog.markSuccess() }
+        verify(exactly = 1) { notificationLogService.updateNotification(event, ResultCode.FAIL) }
         verify(exactly = 1) { acknowledgment.acknowledge() }
     }
 
@@ -104,13 +110,16 @@ class KafkaMeesageConsumerImplTest(
             sender.send(event)
         } throws RuntimeException("test exception")
 
+        every {
+            notificationLogService.updateNotification(event, ResultCode.FAIL)
+        } returns pendingLog
+
         // when
         consumer.consume(event, acknowledgment)
 
         // then
         verify(exactly = 1) { sender.send(event) }
-        verify(exactly = 1) { pendingLog.markFail() }
-        verify(exactly = 0) { pendingLog.markSuccess() }
+        verify(exactly = 1) { notificationLogService.updateNotification(event, ResultCode.FAIL) }
         verify(exactly = 1) { acknowledgment.acknowledge() }
     }
 
@@ -133,8 +142,7 @@ class KafkaMeesageConsumerImplTest(
 
         // then
         verify(exactly = 0) { sender.send(event) }
-        verify(exactly = 0) { pendingLog.markFail() }
-        verify(exactly = 0) { pendingLog.markSuccess() }
+        verify(exactly = 0) { notificationLogService.updateNotification(event, ResultCode.SUCCESS) }
         verify(exactly = 1) { acknowledgment.acknowledge() }
     }
 }

@@ -56,7 +56,7 @@ class FailedNotificationRetrySchedulerTest {
         )
 
         every {
-            logRepository.findReservableLogs(any())
+            logRepository.findRetryableFailedLogs(any())
         } returns listOf(log1, log2)
 
         justRun {
@@ -68,7 +68,7 @@ class FailedNotificationRetrySchedulerTest {
 
         // then
         verify(exactly = 1) {
-            logRepository.findReservableLogs(any())
+            logRepository.findRetryableFailedLogs(any())
         }
 
         verify(exactly = 2) {
@@ -80,7 +80,7 @@ class FailedNotificationRetrySchedulerTest {
     fun `재시도 대상이 없으면 publish 하지 않는다`() {
         // given
         every {
-            logRepository.findReservableLogs(any())
+            logRepository.findRetryableFailedLogs(any())
         } returns emptyList()
 
         // when
@@ -88,7 +88,7 @@ class FailedNotificationRetrySchedulerTest {
 
         // then
         verify(exactly = 1) {
-            logRepository.findReservableLogs(any())
+            logRepository.findRetryableFailedLogs(any())
         }
 
         verify(exactly = 0) {

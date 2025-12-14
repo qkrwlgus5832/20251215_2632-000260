@@ -8,6 +8,7 @@ import com.example.notification.service.NotificationServerSender
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.time.LocalDateTime
 
 /**
@@ -19,13 +20,13 @@ class FailedNotificationRetryScheduler(
     private val logRepository: NotificationLogRepository,
     private val notificationPublisher: NotificationPublisher
 ) {
-
+    companion object {
+        private const val MAX_RETRY_COUNT = 10
+    }
     @Transactional
     @Scheduled(cron = "0 */30 * * * *") // 30분마다 정각
     fun retryFailedNotifications() {
-        val now = LocalDateTime.now()
-
-        val logs = logRepository.findReservableLogs(now)
+        val logs = logRepository.findRetryableFailedLogs(MAX_RETRY_COUNT)
 
         for (log in logs) {
             notificationPublisher.publish(log.toEvent())

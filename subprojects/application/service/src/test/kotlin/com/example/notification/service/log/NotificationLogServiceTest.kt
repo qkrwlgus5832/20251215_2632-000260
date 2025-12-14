@@ -1,5 +1,6 @@
 package com.example.notification.service.log
 
+import com.example.notification.ResultCode
 import com.example.notification.domain.entity.log.NotificationLog
 import com.example.notification.domain.enums.Channel
 import com.example.notification.domain.enums.NotificationStatus
@@ -38,7 +39,7 @@ class NotificationLogServiceTest {
         // when
         val result = service.updateNotification(event)
 
-        assertThat(result.status).isEqualTo(NotificationStatus.PENDING)
+        assertThat(result?.status).isEqualTo(NotificationStatus.PENDING)
     }
 
     @Test
@@ -53,7 +54,7 @@ class NotificationLogServiceTest {
         val result = service.updateNotification(event)
 
         // then
-        assertThat(result.status).isEqualTo(NotificationStatus.PENDING)
+        assertThat(result?.status).isEqualTo(NotificationStatus.PENDING)
     }
 
     @Test
@@ -68,7 +69,37 @@ class NotificationLogServiceTest {
         val result = service.updateNotification(event)
 
         // then
-        assertThat(result.status).isEqualTo(NotificationStatus.SUCCESS)
+        assertThat(result?.status).isEqualTo(NotificationStatus.SUCCESS)
+    }
+
+    @Test
+    fun `resultCode가 SUCCESS인 로그는 SUCCESS 상태로 저장된다`() {
+        // given
+        val event = mockEvent()
+        val log = mockLog(status = NotificationStatus.PENDING)
+
+        every { repository.findFirstByEventId(event.eventId) } returns log
+
+        // when
+        val result = service.updateNotification(event, ResultCode.SUCCESS)
+
+        // then
+        assertThat(result?.status).isEqualTo(NotificationStatus.SUCCESS)
+    }
+
+    @Test
+    fun `resultCode가 FAIL인 로그는 FAILED 상태로 저장된다`() {
+        // given
+        val event = mockEvent()
+        val log = mockLog(status = NotificationStatus.PENDING)
+
+        every { repository.findFirstByEventId(event.eventId) } returns log
+
+        // when
+        val result = service.updateNotification(event, ResultCode.FAIL)
+
+        // then
+        assertThat(result?.status).isEqualTo(NotificationStatus.FAIL)
     }
 
     @Test

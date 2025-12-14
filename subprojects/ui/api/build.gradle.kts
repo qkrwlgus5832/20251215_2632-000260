@@ -8,6 +8,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     api(project(":application:service"))
+    implementation(project(":application:scheduler"))
     implementation(project(":application:notification-kafka-consumer"))
     testImplementation("com.ninja-squad:springmockk:$springMockkVersion")
 }
