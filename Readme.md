@@ -6,9 +6,8 @@
 ---
 ## 2. 프로젝트 실행 방법
 ```bash
- cd subprojects/infra
- docker compose up
-  # 이후 서버 실행
+cd subprojects/infra && docker compose up -d
+java -jar jar/notification-app.jar
 ```
 
 ## 3. 프로젝트 개요
@@ -114,3 +113,6 @@ http://localhost:6067
 ## 9. H2 Console
 
 http://localhost:8080/h2-console
+
+## 10. 실행파일 다운로드
+[notification-app.jar 다운로드](jar/notification-app.jar)
