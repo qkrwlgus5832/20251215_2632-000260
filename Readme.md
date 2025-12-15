@@ -6,7 +6,7 @@
 ---
 ## 2. 프로젝트 실행 방법
 ```bash
-cd subprojects/infra && docker compose up -d
+cd subprojects/infra && docker compose up
 java -jar jar/notification-app.jar
 ```
 

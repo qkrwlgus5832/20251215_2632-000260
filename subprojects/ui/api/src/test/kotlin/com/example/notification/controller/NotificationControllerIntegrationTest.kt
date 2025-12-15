@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.util.LinkedMultiValueMap
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -106,8 +107,15 @@ class NotificationControllerIntegrationTest {
         // when & then
         mockMvc.perform(
             get("/notifications/logs")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .queryParams(
+                    LinkedMultiValueMap<String, String>().apply {
+                        add("requesterId", request.requesterId)
+                        add("from", request.from.toString())
+                        add("to", request.to.toString())
+                        add("page", request.page.toString())
+                        add("size", request.size.toString())
+                    }
+                )
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content").isArray)
