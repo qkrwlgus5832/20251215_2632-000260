@@ -2,7 +2,6 @@ package com.example.notification.request
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.swagger.v3.oas.annotations.media.Schema
-import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 
 @Schema(description="알림 발송/예약 요청(예약시간 필드 값 유무에 따라 즉시/예약이 달라집니다")

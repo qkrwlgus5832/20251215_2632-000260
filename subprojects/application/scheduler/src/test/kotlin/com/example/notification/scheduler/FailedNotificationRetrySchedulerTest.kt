@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import java.time.LocalDateTime
 import kotlin.test.Test
 
-
 class FailedNotificationRetrySchedulerTest {
 
     private lateinit var scheduler: FailedNotificationRetryScheduler

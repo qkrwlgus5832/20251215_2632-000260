@@ -27,7 +27,7 @@ class NotificationLogService(
         val existed = notificationLogRepository.findFirstByEventId(event.eventId)
 
         if (existed?.status == NotificationStatus.FAIL || existed?.status == NotificationStatus.RESERVED){
-            existed.markPending()
+            existed.markPending() // 동시성제어를 위해 즉시 PENDING 처리
         }
 
         return existed
@@ -54,7 +54,7 @@ class NotificationLogService(
             requesterId = event.requesterId,
             channel = event.channel,
             status = NotificationStatus.PENDING,
-            sendAt = LocalDateTime.now(),
+            sendAt = LocalDateTime.now(),  // 즉시 요청이면 sendAt을 현재시각으로
             eventId = event.eventId,
             title = event.title,
             contents = event.contents,

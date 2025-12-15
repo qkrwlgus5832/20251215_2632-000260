@@ -12,7 +12,6 @@ import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import java.util.UUID
 
-
 class NotificationServerSenderTest {
 
     private lateinit var emailSender: EmailSender

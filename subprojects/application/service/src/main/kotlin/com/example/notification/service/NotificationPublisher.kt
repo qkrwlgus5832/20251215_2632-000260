@@ -13,7 +13,7 @@ class NotificationPublisher(
     fun publish(event: NotificationEvent) {
         kafkaMessagePublisher.publish(
             kafkaProperties.notification.topic,
-            "${event.channel}:${event.target}",
+            "${event.channel}:${event.target}", // kafka 파티셔닝 키
             event
         )
     }

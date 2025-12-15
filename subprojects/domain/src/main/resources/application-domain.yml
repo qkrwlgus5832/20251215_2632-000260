@@ -15,7 +15,6 @@ spring:
       enabled: true
       path: /h2-console
 
-  # data.sql/schema.sql 실행 순서 개선(선택)
   sql:
     init:
       mode: always

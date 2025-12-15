@@ -4,7 +4,6 @@ import com.example.notification.domain.enums.Channel
 import com.example.notification.domain.event.NotificationEvent
 import com.example.notification.request.NotificationSendRequest
 
-
 object NotificationEventFactory {
 
     fun from(request: NotificationSendRequest): NotificationEvent {

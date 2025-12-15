@@ -1,6 +1,5 @@
 package com.example.notification.controller
 
-
 import com.example.notification.factory.NotificationEventFactory
 import com.example.notification.request.NotificationLogRequest
 import com.example.notification.service.NotificationPublisher
@@ -78,12 +77,12 @@ class NotificationController(
         val event = NotificationEventFactory.from(request)
 
         if (request.reserveTime == null) { // 즉시 전송이라면
-            notificationLogService.saveInstantNotification(event)
-            notificationPublisher.publish(event)
+            notificationLogService.saveInstantNotification(event) // DB 저장 후
+            notificationPublisher.publish(event) // 즉시 Kafka 메시지 발행
         } else {
-            notificationLogService.saveReserveNotification(event)
+            notificationLogService.saveReserveNotification(event) // 예약 전송이라면 DB 저장
         }
-        return ResponseEntity.accepted().build()
+        return ResponseEntity.accepted().build() // 202 리턴
     }
 
     @Operation(summary = "알림 내역 조회", description = "알림 등록/결과 내역을 조회합니다")

@@ -1,12 +1,10 @@
 package com.example.notification.infra.kafka.client
 
-import com.example.notification.infra.kafka.properties.KafkaProperties
 import org.springframework.kafka.core.KafkaTemplate
 import org.slf4j.LoggerFactory
 
 class KafkaMessagePublisherImpl(
     private val kafkaTemplate: KafkaTemplate<String, Any>,
-    private val kafkaProperties: KafkaProperties
 ) : KafkaMessagePublisher {
     private val log = LoggerFactory.getLogger(javaClass)
 

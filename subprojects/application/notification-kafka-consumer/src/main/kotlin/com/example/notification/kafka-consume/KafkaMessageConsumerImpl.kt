@@ -27,7 +27,7 @@ class KafkaMessageConsumerImpl(
     ) {
         val log = notificationLogService.updateNotification(event)
 
-        if (log != null && log.status == NotificationStatus.PENDING) {
+        if (log != null && log.status == NotificationStatus.PENDING) { // log가 PENDING 상태일때에만
             try {
                 val result = notificationSender.send(event)
                 notificationLogService.updateNotification(event, result)

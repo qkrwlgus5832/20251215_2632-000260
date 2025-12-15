@@ -10,8 +10,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 interface NotificationLogQueryDslRepository {
     fun findRecentLogs(

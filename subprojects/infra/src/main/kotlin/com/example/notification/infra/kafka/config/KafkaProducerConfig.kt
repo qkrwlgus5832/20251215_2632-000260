@@ -36,6 +36,6 @@ class KafkaProducerConfig(
 
     @Bean
     fun kafkaMessagePublisher(): KafkaMessagePublisher {
-        return KafkaMessagePublisherImpl(kafkaTemplate(), kafkaProperties)
+        return KafkaMessagePublisherImpl(kafkaTemplate())
     }
 }

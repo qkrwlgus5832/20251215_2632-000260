@@ -24,7 +24,6 @@ class KafkaMessagePublisherImplTest {
     fun setUp() {
         publisher = KafkaMessagePublisherImpl(
             kafkaTemplate = kafkaTemplate,
-            kafkaProperties = kafkaProperties
         )
     }
 

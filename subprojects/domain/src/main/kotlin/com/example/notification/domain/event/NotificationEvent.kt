@@ -4,6 +4,9 @@ import com.example.notification.domain.enums.Channel
 import java.time.LocalDateTime
 import java.util.UUID
 
+/**
+ * Kafka Message
+ */
 data class NotificationEvent(
     val eventId: String = UUID.randomUUID().toString(),
     val channel: Channel = Channel.EMAIL,
