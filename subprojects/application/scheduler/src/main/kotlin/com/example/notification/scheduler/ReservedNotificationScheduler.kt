@@ -20,6 +20,7 @@ class ReservedNotificationScheduler(
         val logs = logRepository.findReservableLogs(now)
 
         for (log in logs) {
+            log.markPending()
             notificationPublisher.publish(log.toEvent())
         }
     }

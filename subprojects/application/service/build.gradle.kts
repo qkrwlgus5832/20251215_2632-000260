@@ -1,6 +1,6 @@
 dependencies {
     api(project(":domain"))
-    api(project(":client:notification-sender"))
+    api(project(":client:notificationSender"))
     implementation(project(":infra"))
 }
 

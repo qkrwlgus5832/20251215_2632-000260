@@ -5,9 +5,13 @@ import com.example.notification.domain.entity.log.NotificationLog
 import com.example.notification.domain.enums.NotificationStatus
 import com.example.notification.domain.event.NotificationEvent
 import com.example.notification.domain.repository.NotificationLogRepository
+import com.example.notification.service.NotificationPublisher
+import com.example.notification.service.NotificationService
 import com.example.notification.service.log.condition.NotificationLogSearchCondition
+import jakarta.persistence.LockModeType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.jpa.repository.Lock
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -16,7 +20,9 @@ import java.time.LocalDateTime
 
 @Service
 class NotificationLogService(
-    private val notificationLogRepository: NotificationLogRepository
+    private val notificationLogService: NotificationLogService,
+    private val notificationLogRepository: NotificationLogRepository,
+    private val notificationService: NotificationService
 ) {
     companion object {
         private const val LOG_SEARCH_MONTH = 3L
@@ -48,6 +54,15 @@ class NotificationLogService(
     }
 
     @Transactional
+    fun sendNotificationEvent(event: NotificationEvent, reserveTime: LocalDateTime?) {
+        if (reserveTime == null) { // 즉시 전송이라면
+            notificationLogService.saveInstantNotification(event) // DB 저장 후
+            notificationService.sendNotificationEvent(event, reserveTime)
+        } else {
+            notificationLogService.saveReserveNotification(event) // 예약 전송이라면 DB 저장
+        }
+    }
+
     fun saveInstantNotification(event: NotificationEvent): NotificationLog {
         val log = NotificationLog(
             userId = event.target,
@@ -81,7 +96,7 @@ class NotificationLogService(
         return notificationLogRepository.save(log)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     fun getRecentLogs(
         condition: NotificationLogSearchCondition,
         page: Int,

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -72,16 +73,10 @@ class NotificationController(
     )
     @PostMapping
     fun send(
-        @RequestBody request: NotificationSendRequest
+        @RequestBody @Valid request: NotificationSendRequest
     ): ResponseEntity<Void> {
         val event = NotificationEventFactory.from(request)
-
-        if (request.reserveTime == null) { // 즉시 전송이라면
-            notificationLogService.saveInstantNotification(event) // DB 저장 후
-            notificationPublisher.publish(event) // 즉시 Kafka 메시지 발행
-        } else {
-            notificationLogService.saveReserveNotification(event) // 예약 전송이라면 DB 저장
-        }
+        notificationLogService.sendNotificationEvent(event, request.reserveTime)
         return ResponseEntity.accepted().build() // 202 리턴
     }
 

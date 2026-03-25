@@ -25,6 +25,7 @@ class FailedNotificationRetryScheduler(
         val logs = logRepository.findRetryableFailedLogs(MAX_RETRY_COUNT)
 
         for (log in logs) {
+            log.markPending()
             notificationPublisher.publish(log.toEvent())
         }
     }
