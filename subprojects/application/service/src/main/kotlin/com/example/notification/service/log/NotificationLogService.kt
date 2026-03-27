@@ -20,7 +20,6 @@ import java.time.LocalDateTime
 
 @Service
 class NotificationLogService(
-    private val notificationLogService: NotificationLogService,
     private val notificationLogRepository: NotificationLogRepository,
     private val notificationService: NotificationService
 ) {
@@ -56,10 +55,10 @@ class NotificationLogService(
     @Transactional
     fun sendNotificationEvent(event: NotificationEvent, reserveTime: LocalDateTime?) {
         if (reserveTime == null) { // 즉시 전송이라면
-            notificationLogService.saveInstantNotification(event) // DB 저장 후
+            saveInstantNotification(event) // DB 저장 후
             notificationService.sendNotificationEvent(event, reserveTime)
         } else {
-            notificationLogService.saveReserveNotification(event) // 예약 전송이라면 DB 저장
+            saveReserveNotification(event) // 예약 전송이라면 DB 저장
         }
     }
 

@@ -4,7 +4,8 @@ import com.example.notification.ResultCode
 import com.example.notification.SendResponse
 import com.example.notification.properties.NotificationSenderProperties
 import org.slf4j.LoggerFactory
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.postForObject
 
 /**
  * 외부 알림 서버로 전송 요청을 보내고,
@@ -19,24 +20,18 @@ object NotificationSender {
         request: T,
         path: String,
         maxRetry: Int = 3,
-        delayMillis: Long = 1000L,
-        webClient: WebClient,
+        delayMillis: Long = 100L,
+        restTemplate: RestTemplate,
         notificationSenderProperties: NotificationSenderProperties
     ): ResultCode {
         val log = LoggerFactory.getLogger(javaClass)
 
         repeat(maxRetry) { attempt ->
             try {
-                val response = webClient.post()
-                    .uri(notificationSenderProperties.server.baseUrl + path)
-                    .bodyValue(request)
-                    .retrieve()
-                    .onStatus(
-                        { it.isError },
-                        { it.createException() }
-                    )
-                    .bodyToMono(SendResponse::class.java)
-                    .block()
+                val response = restTemplate.postForObject<SendResponse>(
+                    notificationSenderProperties.server.baseUrl + path,
+                    request
+                )
 
                 if (response?.resultCode == ResultCode.SUCCESS) {
                     return ResultCode.SUCCESS
@@ -44,8 +39,6 @@ object NotificationSender {
             } catch (exception: Exception) {
                 log.warn("Notification send failed. retrying...", exception)
             }
-
-            Thread.sleep(delayMillis)
         }
 
         return ResultCode.FAIL

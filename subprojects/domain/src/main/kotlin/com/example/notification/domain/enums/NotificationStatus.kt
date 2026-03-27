@@ -4,5 +4,6 @@ enum class NotificationStatus {
     PENDING,
     RESERVED,
     SUCCESS,
-    FAIL
+    FAIL,
+    DEAD,
 }

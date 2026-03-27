@@ -20,6 +20,7 @@ interface NotificationLogRepository : JpaRepository<NotificationLog, Long>, Noti
         order by l.createdAt
     """
     )
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     fun findReservableLogs(
         @Param("now") now: LocalDateTime
     ): List<NotificationLog>
@@ -29,9 +30,22 @@ interface NotificationLogRepository : JpaRepository<NotificationLog, Long>, Noti
         select l
         from NotificationLog l
         where l.status = 'FAIL'
-            and l.retryCount < :maxRetry
+            and l.retryCount <= :maxRetry
         order by l.createdAt
     """
     )
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     fun findRetryableFailedLogs(maxRetry: Int): List<NotificationLog>
+
+    @Query(
+        """
+        select l
+        from NotificationLog l
+        where l.status = 'FAIL'
+            and l.retryCount > :maxRetry
+        order by l.createdAt
+    """
+    )
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    fun findOverMaxRetryFailedLogs(maxRetry: Int): List<NotificationLog>
 }

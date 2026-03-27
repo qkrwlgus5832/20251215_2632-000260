@@ -81,4 +81,8 @@ class NotificationLog(
     fun markPending() {
         this.status = NotificationStatus.PENDING
     }
+
+    fun markDead() {
+        this.status = NotificationStatus.DEAD
+    }
 }

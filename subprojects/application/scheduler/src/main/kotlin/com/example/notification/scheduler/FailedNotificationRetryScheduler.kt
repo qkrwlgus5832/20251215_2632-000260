@@ -23,10 +23,16 @@ class FailedNotificationRetryScheduler(
     @Scheduled(cron = "0 */10 * * * *") // 10분마다 정각
     fun retryFailedNotifications() {
         val logs = logRepository.findRetryableFailedLogs(MAX_RETRY_COUNT)
+        val deadLogs = logRepository.findOverMaxRetryFailedLogs(MAX_RETRY_COUNT)
 
         for (log in logs) {
             log.markPending()
             notificationPublisher.publish(log.toEvent())
         }
+
+        for (deadLog in deadLogs) {
+            deadLog.markDead()
+        }
+
     }
 }
